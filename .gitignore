@@ -81,3 +81,9 @@ jspm_packages/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+node_modules/
+build/
+.env
+.DS_Store
+.vscode/

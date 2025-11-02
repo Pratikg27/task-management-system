@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { authAPI } from '../services/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -8,181 +9,235 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [countdown, setCountdown] = useState(3);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const { name, email, password, confirmPassword } = formData;
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setMessage(''); // Clear message when user types
   };
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);
+    setMessage('');
+
+    // Validation
     if (password !== confirmPassword) {
-      setMessage('❌ Passwords do not match!');
+      setMessage('❌ Passwords do not match');
+      setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setMessage('❌ Password must be at least 6 characters!');
+      setMessage('❌ Password must be at least 6 characters');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    
-    // Demo mode - simulate API call
-    setTimeout(() => {
-      try {
-        // Get existing users
-        const existingUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    try {
+      console.log('🔄 Attempting registration...');
+      
+      const response = await authAPI.register({
+        name,
+        email,
+        password
+      });
+
+      console.log('✅ Registration successful:', response.data);
+      
+      if (response.data && response.data.success) {
+        // Show success message
+        setMessage('✅ Registration successful! Redirecting to login...');
         
-        // Check if user already exists
-        if (existingUsers.find(u => u.email === email)) {
-          setMessage('❌ User with this email already exists!');
-          setLoading(false);
-          return;
-        }
+        // Clear form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        });
         
-        // Create new user
-        const newUser = {
-          id: Date.now(),
-          name,
-          email,
-          password,
-          createdAt: new Date().toISOString()
-        };
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          navigate('/login', { replace: true });
+        }, 2000);
         
-        // Save to localStorage
-        existingUsers.push(newUser);
-        localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
-        
-        setShowSuccess(true);
-        
-        // Countdown timer
-        const timer = setInterval(() => {
-          setCountdown((prev) => {
-            if (prev === 1) {
-              clearInterval(timer);
-              navigate('/login');
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-        
-      } catch (err) {
+      } else {
         setMessage('❌ Registration failed. Please try again.');
-        setLoading(false);
       }
-    }, 2000);
+      
+    } catch (error) {
+      console.error('❌ Registration error:', error);
+      
+      if (error.response?.data?.message) {
+        setMessage('❌ ' + error.response.data.message);
+      } else if (error.code === 'ECONNREFUSED') {
+        setMessage('❌ Cannot connect to server. Please check your connection.');
+      } else {
+        setMessage('❌ Registration failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (showSuccess) {
-    return (
-      <div className="glass-card success-animation">
-        <div className="success-icon">🎉</div>
-        <h2 style={{color: 'white', marginBottom: '20px'}}>Registration Successful!</h2>
-        <p style={{color: 'rgba(255, 255, 255, 0.8)', marginBottom: '30px'}}>
-          Welcome to Task Manager Pro! Your account has been created successfully.
-        </p>
-        <div style={{color: 'rgba(255, 255, 255, 0.6)'}}>
-          Redirecting to login page in <span>{countdown}</span> seconds...
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="glass-card">
-      <h1 className="title">🚀 Join Task Manager Pro</h1>
-      <p className="subtitle">Create your account and start organizing!</p>
-      
-      {message && (
-        <div className={`message ${message.includes('✅') ? 'success-message' : 'error-message'}`}>
-          {message}
-        </div>
-      )}
-      
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Full Name"
-            required
-          />
-          <label className="floating-label">👤 Full Name</label>
-        </div>
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      backgroundColor: '#f5f5f5'
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '2rem',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        width: '100%',
+        maxWidth: '400px'
+      }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Create Account</h2>
         
-        <div className="form-group">
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Email"
-            required
-          />
-          <label className="floating-label">📧 Email Address</label>
-        </div>
+        {message && (
+          <div style={{
+            padding: '0.75rem',
+            marginBottom: '1rem',
+            borderRadius: '4px',
+            backgroundColor: message.includes('✅') ? '#d4edda' : '#f8d7da',
+            color: message.includes('✅') ? '#155724' : '#721c24',
+            border: `1px solid ${message.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`
+          }}>
+            {message}
+          </div>
+        )}
         
-        <div className="form-group password-container">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={password}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Password"
-            required
-          />
-          <label className="floating-label">🔒 Password</label>
-          <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-            {showPassword ? '🙈' : '👁️'}
-          </span>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={name}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Enter password (min 6 characters)"
+              required
+              minLength={6}
+            />
+          </div>
+
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              backgroundColor: loading ? '#ccc' : '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginBottom: '1rem'
+            }}
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </button>
+        </form>
         
-        <div className="form-group password-container">
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Confirm Password"
-            required
-          />
-          <label className="floating-label">🔒 Confirm Password</label>
-          <span className="password-toggle" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-            {showConfirmPassword ? '🙈' : '👁️'}
-          </span>
+        <div style={{ textAlign: 'center' }}>
+          <span>Already have an account? </span>
+          <Link 
+            to="/login" 
+            style={{ 
+              color: '#007bff', 
+              textDecoration: 'none',
+              fontWeight: 'bold'
+            }}
+          >
+            Sign in here
+          </Link>
         </div>
-        
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? (
-            <>
-              <span className="loading"></span>
-              Creating Account...
-            </>
-          ) : (
-            'Create Account'
-          )}
-        </button>
-      </form>
-      
-      <div className="auth-link">
-        Already have an account? <Link to="/login">Sign in here</Link>
       </div>
     </div>
   );

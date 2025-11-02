@@ -1,134 +1,171 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { authAPI } from '../services/api';
 
-const Login = ({ setIsAuthenticated }) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [message, setMessage] = useState('');
+const Login = ({ setIsAuthenticated, setCurrentUser }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const { email, password } = formData;
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    // CRITICAL: Prevent form submission
     e.preventDefault();
-    setLoading(true);
+    e.stopPropagation();
     
-    // Demo mode - simulate API call
-    setTimeout(() => {
-      // Get registered users from localStorage
-      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+    console.log('🔄 STEP 1: Form submission prevented');
+    console.log('🔄 STEP 2: Email:', email);
+    console.log('🔄 STEP 3: Password length:', password.length);
+    
+    setLoading(true);
+    setMessage('');
+
+    try {
+      console.log('🔄 STEP 4: Creating request data...');
+      const credentials = { email, password };
+      console.log('🔄 STEP 5: Credentials:', credentials);
       
-      // Demo users for testing
-      const demoUsers = [
-        { email: 'demo@example.com', password: '123456', name: 'Demo User' },
-        { email: 'admin@test.com', password: 'admin123', name: 'Admin User' }
-      ];
+      console.log('🔄 STEP 6: Calling authAPI.login...');
+      const response = await authAPI.login(credentials);
       
-      // Combine demo users with registered users
-      const allUsers = [...demoUsers, ...registeredUsers];
+      console.log('✅ STEP 7: Response received:', response);
+      console.log('✅ STEP 8: Response data:', response.data);
       
-      const user = allUsers.find(u => u.email === email && u.password === password);
-      
-      if (user) {
-        // Store user data
-        localStorage.setItem('token', 'demo-token-' + Date.now());
-        localStorage.setItem('currentUser', JSON.stringify(user));
+      if (response.data && response.data.success) {
+        console.log('✅ STEP 9: Login successful!');
+        console.log('✅ STEP 10: Token:', response.data.token ? 'EXISTS' : 'MISSING');
+        console.log('✅ STEP 11: User:', response.data.user);
         
+        // Store authentication data
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+        
+        // Update app state
         setIsAuthenticated(true);
+        setCurrentUser(response.data.user);
+        
         setMessage('✅ Login successful! Redirecting...');
         
+        // Navigate to dashboard
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
+          navigate('/dashboard', { replace: true });
+        }, 1000);
+        
       } else {
-        setMessage('❌ Invalid email or password. Try: demo@example.com / 123456');
-        setLoading(false);
+        console.log('❌ STEP 9: Login failed - invalid response');
+        setMessage('❌ Login failed - invalid response');
       }
-    }, 1500);
-  };
-
-  const togglePassword = () => {
-    setShowPassword(!showPassword);
+      
+    } catch (error) {
+      console.error('❌ STEP 7: Login error caught:', error);
+      console.error('❌ Error name:', error.name);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error response:', error.response);
+      console.error('❌ Error response data:', error.response?.data);
+      
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+      setMessage('❌ ' + errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="glass-card">
-      <h1 className="title">✨ Task Manager Pro</h1>
-      <p className="subtitle">Welcome back! Please sign in to continue</p>
-      
-      {/* Demo Credentials Info */}
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      backgroundColor: '#f5f5f5'
+    }}>
       <div style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        padding: '15px',
-        borderRadius: '10px',
-        marginBottom: '20px',
-        textAlign: 'center',
-        color: 'rgba(255, 255, 255, 0.9)',
-        fontSize: '0.9rem'
+        backgroundColor: 'white',
+        padding: '2rem',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        width: '100%',
+        maxWidth: '400px'
       }}>
-        <strong>🎯 Demo Credentials:</strong><br/>
-        Email: demo@example.com<br/>
-        Password: 123456
-      </div>
-      
-      {message && (
-        <div className={`message ${message.includes('✅') ? 'success-message' : 'error-message'}`}>
-          {message}
-        </div>
-      )}
-      
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Email"
-            required
-          />
-          <label className="floating-label">📧 Email Address</label>
-        </div>
+        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
         
-        <div className="form-group password-container">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={password}
-            onChange={onChange}
-            className="form-input"
-            placeholder="Password"
-            required
-          />
-          <label className="floating-label">🔒 Password</label>
-          <span className="password-toggle" onClick={togglePassword}>
-            {showPassword ? '🙈' : '👁️'}
-          </span>
-        </div>
+        {message && (
+          <div style={{
+            padding: '0.75rem',
+            marginBottom: '1rem',
+            borderRadius: '4px',
+            backgroundColor: message.includes('✅') ? '#d4edda' : '#f8d7da',
+            color: message.includes('✅') ? '#155724' : '#721c24',
+            border: `1px solid ${message.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`
+          }}>
+            {message}
+          </div>
+        )}
         
-        <button type="submit" className="btn" disabled={loading}>
-          {loading ? (
-            <>
-              <span className="loading"></span>
-              Signing In...
-            </>
-          ) : (
-            'Sign In'
-          )}
-        </button>
-      </form>
-      
-      <div className="auth-link">
-        Don't have an account? <Link to="/register">Create one here</Link>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '1rem' }}>
+            <label htmlFor="email" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              Email:
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem'
+              }}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label htmlFor="password" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              Password:
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem'
+              }}
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              backgroundColor: loading ? '#ccc' : '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        
+        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
       </div>
     </div>
   );

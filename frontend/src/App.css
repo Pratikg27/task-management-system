@@ -392,12 +392,12 @@ body {
 .stat-number {
   font-size: 2rem;
   font-weight: bold;
-  color: white;
+  color: rgba(14, 13, 13, 0.8);
   margin-bottom: 5px;
 }
 
 .stat-label {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(14, 13, 13, 0.8);
   font-size: 0.9rem;
 }
 

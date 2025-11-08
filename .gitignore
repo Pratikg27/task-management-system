@@ -87,3 +87,7 @@ build/
 .env
 .DS_Store
 .vscode/
+
+node_modules/
+.env
+.DS_Store

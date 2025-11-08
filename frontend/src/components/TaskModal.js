@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import './TaskModal.css';
 
 const TaskModal = ({ isOpen, onClose, onSubmit, task, loading }) => {
   const [formData, setFormData] = useState({

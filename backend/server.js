@@ -5,9 +5,24 @@ require('dotenv').config();
 
 const app = express();
 
-// Fixed CORS Configuration (removed the problematic app.options line)
+// CORS Configuration for Development and Production
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  process.env.CLIENT_URL // This will be your Vercel URL
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
@@ -34,6 +49,37 @@ app.use((req, res, next) => {
     originalSend.call(this, data);
   };
   next();
+});
+
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    success: true,
+    message: 'Task Management API is running! 🚀',
+    status: 'Server is online'
+  });
+});
+
+// API info route
+app.get('/api', (req, res) => {
+  res.json({ 
+    success: true,
+    message: 'API is running successfully! 🚀',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    availableEndpoints: {
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login'
+      },
+      tasks: {
+        getAllTasks: 'GET /api/tasks',
+        createTask: 'POST /api/tasks',
+        updateTask: 'PUT /api/tasks/:id',
+        deleteTask: 'DELETE /api/tasks/:id'
+      }
+    }
+  });
 });
 
 // Routes

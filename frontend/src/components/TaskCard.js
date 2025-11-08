@@ -10,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
+import './TaskCard.css';
 
 const TaskCard = ({ task, onEdit, onDelete, onStatusChange }) => {
   const getPriorityClass = (priority) => {

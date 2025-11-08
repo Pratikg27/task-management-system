@@ -5,9 +5,7 @@ import {
   Search, 
   RefreshCw,
   CheckSquare,
-  Clock,
   AlertCircle,
-  BarChart3,
   LogOut
 } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
@@ -15,6 +13,7 @@ import TaskCard from './TaskCard';
 import TaskModal from './TaskModal';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import StatsDashboard from './StatsDashboard'; 
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const {
@@ -188,56 +187,8 @@ const handleDeleteTask = async (taskId) => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-card-content">
-              <div className="stat-icon blue">
-                <BarChart3 size={24} />
-              </div>
-              <div>
-                <p className="stat-label">Total Tasks</p>
-                <p className="stat-number">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-card-content">
-              <div className="stat-icon yellow">
-                <Clock size={24} />
-              </div>
-              <div>
-                <p className="stat-label">Pending</p>
-                <p className="stat-number">{stats.pending}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-card-content">
-              <div className="stat-icon blue">
-                <AlertCircle size={24} />
-              </div>
-              <div>
-                <p className="stat-label">In Progress</p>
-                <p className="stat-number">{stats.inProgress}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-card-content">
-              <div className="stat-icon green">
-                <CheckSquare size={24} />
-              </div>
-              <div>
-                <p className="stat-label">Completed</p>
-                <p className="stat-number">{stats.completed}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <StatsDashboard stats={stats} tasks={tasks} />
+        
         {/* Controls */}
         <div className="controls-panel">
           <div className="controls-row">

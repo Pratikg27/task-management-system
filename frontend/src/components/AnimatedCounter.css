@@ -1,0 +1,49 @@
+.animated-counter {
+  font-weight: 700;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+.animated-counter.large {
+  font-size: 2rem;
+}
+
+.animated-counter.medium {
+  font-size: 1.5rem;
+}
+
+.animated-counter.small {
+  font-size: 1.125rem;
+}
+
+.animated-counter.primary {
+  color: #2563eb;
+}
+
+.animated-counter.success {
+  color: #10b981;
+}
+
+.animated-counter.warning {
+  color: #f59e0b;
+}
+
+.animated-counter.danger {
+  color: #ef4444;
+}
+
+.animated-counter.glow {
+  text-shadow: 0 0 10px currentColor;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    text-shadow: 0 0 10px currentColor;
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 0 0 20px currentColor;
+    transform: scale(1.05);
+  }
+}

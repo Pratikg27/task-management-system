@@ -9,19 +9,29 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
+  'https://task-management-system-one-theta.vercel.app',
   process.env.CLIENT_URL // This will be your Vercel URL
-];
+].filter(Boolean); // Remove undefined values
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    console.log('🔍 CORS Check - Request Origin:', origin);
+    console.log('🔍 CORS Check - Allowed Origins:', allowedOrigins);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      console.log('✅ CORS: No origin (allowing)');
+      return callback(null, true);
     }
-    return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('✅ CORS: Origin allowed');
+      return callback(null, true);
+    }
+    
+    console.log('❌ CORS: Origin blocked');
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -95,5 +105,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`✅ API available at: http://localhost:${PORT}/api`);
-  console.log(`✅ CORS enabled for: http://localhost:3000`);
+  console.log(`✅ CORS enabled for origins:`, allowedOrigins);
 });

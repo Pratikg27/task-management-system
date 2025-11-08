@@ -1,16 +1,18 @@
 import axios from 'axios';
+import config from '../config';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Use config for API base URL
+const API_BASE_URL = `${config.API_URL}/api`;
 
-// Create axios instance
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Increased from 10000 to 30000 (30 seconds)
+  timeout: 30000, // 30 seconds
 });
+
 // Add token to requests
 api.interceptors.request.use(
   (config) => {
@@ -34,6 +36,7 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 // Handle responses and errors
 api.interceptors.response.use(
   (response) => {
@@ -71,6 +74,7 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 // Auth API functions
 export const authAPI = {
   // Login user

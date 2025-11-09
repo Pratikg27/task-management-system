@@ -282,59 +282,105 @@ npm start
 
 ✅ Frontend will open at: http://localhost:3000
 
-🌐 Deployment
-Deploy Frontend to Vercel
-Push code to GitHub
+
+🌐 DEPLOYMENT GUIDE
+
+====================================================
+1️⃣ DEPLOY FRONTEND TO VERCEL
+====================================================
+
+1. PUSH CODE TO GITHUB
+----------------------------------------------------
 git add .
 git commit -m "Ready for deployment"
 git push origin main
-Deploy on Vercel
-Go to https://vercel.com/dashboard
-Click "New Project"
-Import your GitHub repository
-Configure project:
+
+2. DEPLOY ON VERCEL
+----------------------------------------------------
+- Go to: https://vercel.com/dashboard
+- Click "New Project"
+- Import your GitHub repository
+
+3. CONFIGURE PROJECT
+----------------------------------------------------
 Framework Preset: Create React App
 Root Directory: frontend
 Build Command: npm run build
 Output Directory: build
-Add Environment Variable:
+
+4. ADD ENVIRONMENT VARIABLE
+----------------------------------------------------
 REACT_APP_API_URL = https://task-management-system-f40x.onrender.com
+
+5. DEPLOY
+----------------------------------------------------
 Click "Deploy"
-Deploy Backend to Render
-Create Web Service
-Go to https://dashboard.render.com/
-Click "New" → "Web Service"
-Connect your GitHub repository
-Configure Service
+✅ Frontend will now be live on Vercel.
+
+====================================================
+2️⃣ DEPLOY BACKEND TO RENDER
+====================================================
+
+1. CREATE WEB SERVICE
+----------------------------------------------------
+- Go to: https://dashboard.render.com/
+- Click "New" → "Web Service"
+- Connect your GitHub repository
+
+2. CONFIGURE SERVICE
+----------------------------------------------------
 Name: task-management-system
 Root Directory: backend
 Environment: Node
 Build Command: npm install
 Start Command: npm start
-Add Environment Variables
+
+3. ADD ENVIRONMENT VARIABLES
+----------------------------------------------------
 MONGODB_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_super_secret_jwt_key
 CLIENT_URL=https://task-management-system-one-theta.vercel.app
 PORT=5000
+
+4. CREATE SERVICE
+----------------------------------------------------
 Click "Create Web Service"
-Setup MongoDB Atlas
-Create Cluster
-Go to https://www.mongodb.com/cloud/atlas
-Create a free cluster
-Choose cloud provider and region
-Create Database User
-Go to "Database Access"
-Add new database user
-Save username and password
-Configure Network Access
-Go to "Network Access"
-Add IP Address: 0.0.0.0/0 (allow from anywhere)
-Get Connection String
-Go to "Database" → "Connect"
-Choose "Connect your application"
-Copy connection string
-Replace <password> with your database user password
-Add to Render environment variables
+✅ Render will deploy your backend automatically.
+
+====================================================
+3️⃣ SETUP MONGODB ATLAS
+====================================================
+
+1. CREATE CLUSTER
+----------------------------------------------------
+- Go to: https://www.mongodb.com/cloud/atlas
+- Click "Create a Free Cluster"
+- Choose your cloud provider and region
+
+2. CREATE DATABASE USER
+----------------------------------------------------
+- Go to "Database Access"
+- Click "Add New Database User"
+- Save your username and password
+
+3. CONFIGURE NETWORK ACCESS
+----------------------------------------------------
+- Go to "Network Access"
+- Add IP Address: 0.0.0.0/0  (allow access from anywhere)
+
+4. GET CONNECTION STRING
+----------------------------------------------------
+- Go to "Database" → "Connect" → "Connect your application"
+- Copy the connection string
+- Replace <password> with your database user password
+
+Example:
+mongodb+srv://username:password@cluster0.mongodb.net/taskDB?retryWrites=true&w=majority
+
+- Add this string to your Render environment variable:
+MONGODB_URI
+
+
 🔌 API Endpoints
 Base URL
 Production: https://task-management-system-f40x.onrender.com
@@ -487,6 +533,8 @@ Error Response (404):
   "message": "Task not found"
 }
 
+
+
 Error Codes
 | Code | Description |
 |------|-------------|
@@ -497,7 +545,9 @@ Error Codes
 | 404 | Not Found - Resource doesn't exist |
 | 500 | Internal Server Error |
 
+
 ✅ Testing
+
 Manual Testing Checklist
 All features have been thoroughly tested:
 
@@ -526,17 +576,22 @@ All features have been thoroughly tested:
 | | Tablet view (768x1024) | ✅ Pass |
 | | Mobile view (375x667) | ✅ Pass |
 
+
 Browser Compatibility
+
 Tested and verified on:
 
 ✅ Google Chrome (Latest)
 ✅ Mozilla Firefox (Latest)
 ✅ Microsoft Edge (Latest)
 ✅ Safari (Latest)
+
 Device Testing
 ✅ Desktop (Windows, macOS)
 ✅ Tablet (iPad, Android tablets)
 ✅ Mobile (iPhone, Android phones)
+
+
 📁 Project Structure
 task-management-system/
 │
@@ -559,7 +614,6 @@ task-management-system/
 │   │   └── favicon.ico
 │   ├── src/                          # Source files
 │   │   ├── components/               # Reusable components
-│   │   ├── pages/                    # Page components
 │   │   │   ├── Login.js              # Login page
 │   │   │   ├── Register.js           # Registration page
 │   │   │   └── Dashboard.js          # Main dashboard
@@ -580,6 +634,8 @@ task-management-system/
 ├── .gitignore                        # Git ignore file
 └── README.md                         # Project documentation
 
+
+
 🚀 Future Enhancements
 Planned Features
 | Priority | Feature | Description |
@@ -595,6 +651,8 @@ Planned Features
 | 🟢 Low | Mobile App | Native Android/iOS application |
 | 🟢 Low | File Attachments | Upload files with tasks |
 
+
+
 Technical Improvements
 [ ] Add unit tests (Jest, React Testing Library)
 [ ] Add integration tests for API endpoints
@@ -606,26 +664,37 @@ Technical Improvements
 [ ] Add error monitoring (Sentry)
 [ ] Implement WebSocket for real-time updates
 [ ] Add PWA features for offline support
+
+
 🐛 Known Issues & Limitations
+
 Current Limitations
-Backend Cold Start
+
+1.Backend Cold Start
 Free tier Render service sleeps after 15 minutes of inactivity
 First request takes 30-60 seconds to wake up
 Solution: Upgrade to paid tier or implement keep-alive ping
-Database Storage
+
+2.Database Storage
 MongoDB Atlas free tier has 512MB storage limit
 Solution: Upgrade to paid tier when needed
-No Real-time Updates
+
+3.No Real-time Updates
 Task changes don't reflect in real-time across multiple sessions
 Solution: Implement WebSocket or Server-Sent Events
+
 No Known Bugs
 All features tested and working as expected
 No critical bugs reported
 If you find an issue, please https://github.com/Pratikg27/task-management-system/issues
+
+
 📞 Contact
-Developer Information
+
+Developer Information:
+
 Pratik Gunjal
-Software Developer (Training)
+Software Developer 
 Moxiedeck Software Pvt Ltd
 
 📧 Email: pratikgunjal27@gmail.com
@@ -633,7 +702,7 @@ Moxiedeck Software Pvt Ltd
 🔗 Project Repository: https://github.com/Pratikg27/task-management-system
 🌐 Live Demo: https://task-management-system-one-theta.vercel.app
 
-Training Supervisor
+Training Supervisor:
 Sakshi Jadhav
 Trainer - Moxiedeck Software Pvt Ltd
 
@@ -643,6 +712,7 @@ Sakshi Jadhav - For guidance, mentorship, and project supervision throughout the
 MongoDB Atlas - For free cloud database hosting
 Vercel - For seamless frontend deployment
 Render - For reliable backend hosting
+
 📄 License
 This project is developed as part of a training assignment at Moxiedeck Software Pvt Ltd.
 All rights reserved by Moxiedeck Software Pvt Ltd.
@@ -659,7 +729,7 @@ For Educational and Training Purposes Only
 | Components | 15+ |
 | Test Cases | 25+ |
 
-⭐ If you found this project helpful, please give it a star!
+
 Built with ❤️ by Pratik Gunjal
 
 Training Project - Moxiedeck Software Pvt Ltd

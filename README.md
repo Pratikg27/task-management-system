@@ -692,12 +692,11 @@ If you find an issue, please https://github.com/Pratikg27/task-management-system
 📞 Contact
 
 Developer Information:
-
 Pratik Gunjal
 Software Developer 
 Moxiedeck Software Pvt Ltd
 
-📧 Email: pratikgunjal27@gmail.com
+📧 Email: pratikgunjal2127@gmail.com
 🐙 GitHub: https://github.com/Pratikg27
 🔗 Project Repository: https://github.com/Pratikg27/task-management-system
 🌐 Live Demo: https://task-management-system-one-theta.vercel.app

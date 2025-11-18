@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 const sendEmail = async (options) => {
   try {
@@ -6,44 +6,37 @@ const sendEmail = async (options) => {
     console.log('📧 Sending to:', options.email);
     console.log('📧 From:', process.env.EMAIL_USER);
     
-    // Remove spaces from password
-    const cleanPassword = process.env.EMAIL_PASSWORD.replace(/\s+/g, '');
+    // Set SendGrid API key
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: cleanPassword
-      }
-    });
-
-    console.log('✅ Transporter created successfully');
-
-    // Verify connection
-    await transporter.verify();
-    console.log('✅ SMTP connection verified');
-
-    // Email options
-    const mailOptions = {
-      from: `Task Manager <${process.env.EMAIL_USER}>`,
+    // Email message
+    const msg = {
       to: options.email,
+      from: {
+        email: process.env.EMAIL_USER,
+        name: 'Task Manager'
+      },
       subject: options.subject,
-      html: options.message
+      html: options.message,
     };
 
+    console.log('✅ Message prepared, sending via SendGrid...');
+
     // Send email
-    const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent successfully!');
-    console.log('📧 Message ID:', info.messageId);
+    const response = await sgMail.send(msg);
+    
+    console.log('✅ Email sent successfully via SendGrid!');
+    console.log('📧 Response status:', response[0].statusCode);
     
     return true;
   } catch (error) {
     console.error('❌ Email sending failed!');
-    console.error('❌ Error name:', error.name);
-    console.error('❌ Error message:', error.message);
-    console.error('❌ Error code:', error.code);
-    console.error('❌ Full error:', error);
+    console.error('❌ Error:', error);
+    
+    if (error.response) {
+      console.error('❌ SendGrid error body:', error.response.body);
+    }
+    
     return false;
   }
 };

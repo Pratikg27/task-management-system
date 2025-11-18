@@ -203,24 +203,37 @@ The **Online Task Management System** is a full-stack web application developed 
 
 ## 🖼️ Screenshots
 
-### 🔑 Login Page
+### Authentication Flow
+
+#### 🔑 Login Page
 ![Login Page](screenshots/login.png)
-*Secure login with email and password*
+*Secure login with email and password. Includes "Forgot Password?" link for easy password recovery.*
 
-### 📝 Registration Page
+#### 📝 Registration Page
 ![Register Page](screenshots/register.png)
-*User registration with validation*
+*User registration with real-time validation. Creates secure account with encrypted password.*
 
-### 📊 Dashboard
-![Dashboard](screenshots/dashboard1.png)
-*Task statistics and overview*
+#### 🔐 Forgot Password
+![Forgot Password](screenshots/forgot-password.png)
+*Simple password reset request form. Enter email to receive reset link via SendGrid.*
 
-### ✅ Task Management
-![Task List](screenshots/tasks.png)
-*Complete task management interface*
+#### 🔄 Reset Password
+![Reset Password Page](screenshots/reset-password.png)
+*Secure password reset page with token validation. Set new password with confirmation.*
 
 ---
 
+### Application Features
+
+#### 📊 Dashboard
+![Dashboard](screenshots/dashboard1.png)
+*Comprehensive task statistics and overview. Visual breakdown of task status and priorities.*
+
+#### ✅ Task Management
+![Task List](screenshots/tasks.png)
+*Complete task management interface with filtering, sorting, and CRUD operations.*
+
+---
 ## 🚀 Getting Started
 
 ### Prerequisites

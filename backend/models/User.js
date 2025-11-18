@@ -17,6 +17,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  // ADD THESE NEW FIELDS FOR PASSWORD RESET
+  resetPasswordToken: {
+    type: String,
+    default: null
+  },
+  resetPasswordExpire: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true

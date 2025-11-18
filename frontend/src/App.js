@@ -6,7 +6,8 @@ import Register from './components/Register'; // ADD THIS LINE
 import Dashboard from './components/Dashboard';
 import { authAPI } from './services/api';
 import './App.css';
-
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 // Add Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -98,38 +99,54 @@ function App() {
     <ErrorBoundary>
       <Router>
         <div className="App">
-          <Routes>
-            <Route 
-              path="/login" 
-              element={
-                isAuthenticated ? 
-                <Navigate to="/dashboard" replace /> : 
-                <Login setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />
-              } 
-            />
-            <Route 
-              path="/register" 
-              element={
-                isAuthenticated ? 
-                <Navigate to="/dashboard" replace /> : 
-                <Register setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />
-              } 
-            />
-            <Route 
-              path="/dashboard" 
-              element={
-                isAuthenticated ? 
-                <TaskProvider>
-                  <Dashboard setIsAuthenticated={setIsAuthenticated} currentUser={currentUser} />
-                </TaskProvider> : 
-                <Navigate to="/login" replace />
-              } 
-            />
-            <Route 
-              path="/" 
-              element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} 
-            />
-          </Routes>
+         <Routes>
+  <Route 
+    path="/login" 
+    element={
+      isAuthenticated ? 
+      <Navigate to="/dashboard" replace /> : 
+      <Login setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />
+    } 
+  />
+  <Route 
+    path="/register" 
+    element={
+      isAuthenticated ? 
+      <Navigate to="/dashboard" replace /> : 
+      <Register setIsAuthenticated={setIsAuthenticated} setCurrentUser={setCurrentUser} />
+    } 
+  />
+  <Route 
+    path="/forgot-password" 
+    element={
+      isAuthenticated ? 
+      <Navigate to="/dashboard" replace /> : 
+      <ForgotPassword />
+    } 
+  />
+  <Route 
+    path="/reset-password/:token" 
+    element={
+      isAuthenticated ? 
+      <Navigate to="/dashboard" replace /> : 
+      <ResetPassword />
+    } 
+  />
+  <Route 
+    path="/dashboard" 
+    element={
+      isAuthenticated ? 
+      <TaskProvider>
+        <Dashboard setIsAuthenticated={setIsAuthenticated} currentUser={currentUser} />
+      </TaskProvider> : 
+      <Navigate to="/login" replace />
+    } 
+  />
+  <Route 
+    path="/" 
+    element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} 
+  />
+</Routes>
         </div>
       </Router>
     </ErrorBoundary>

@@ -114,6 +114,31 @@ export const authAPI = {
       console.error('❌ authAPI.getCurrentUser error:', error);
       throw error;
     }
+  },
+  // Forgot password
+  forgotPassword: async (email) => {
+    console.log('🔄 authAPI.forgotPassword called with:', email);
+    try {
+      const response = await api.post('/auth/forgot-password', { email });
+      console.log('✅ authAPI.forgotPassword success:', response.data);
+      return response;
+    } catch (error) {
+      console.error('❌ authAPI.forgotPassword error:', error);
+      throw error;
+    }
+  },
+  
+  // Reset password
+  resetPassword: async (token, password) => {
+    console.log('🔄 authAPI.resetPassword called');
+    try {
+      const response = await api.post(`/auth/reset-password/${token}`, { password });
+      console.log('✅ authAPI.resetPassword success:', response.data);
+      return response;
+    } catch (error) {
+      console.error('❌ authAPI.resetPassword error:', error);
+      throw error;
+    }
   }
 };
 
